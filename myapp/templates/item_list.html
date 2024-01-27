@@ -1,0 +1,183 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Django App{% endblock %}</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color: #adcd0f;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        nav {
+            display: inline-block;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-end; /* Align items to the right */
+        }
+
+        nav li {
+            margin-left: 20px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #search-container {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+        }
+
+        #search-icon {
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #search-input {
+            display: none;
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+            /* ... (existing styles) ... */
+    
+            #menu-bar {
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                transform: translateY(-50%);
+            }
+    
+            .menu-icon {
+                display: none; /* Initially hide on larger screens */
+                float: right;
+                cursor: pointer;
+                padding: 15px;
+                font-size: 20px;
+                color: white;
+            }
+
+            @media only screen and (max-width: 600px) {
+                /* Show menu icon on smaller screens */
+                ul.navbar {
+                    display: none; /* Hide menu items by default on smaller screens */
+                }
+    
+                .menu-icon {
+                    display: block; /* Show menu icon */
+                }
+    
+                ul.navbar.show {
+                    display: block; /* Show menu items when the icon is clicked */
+                }
+            }
+       
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Your Site</h1>
+        <nav>
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <ul>
+                <li><a href="#" id="home-link">Home</a></li>
+                <li><a href="#" id="about-link">About</a></li>
+            </ul>
+            
+        </nav>
+        
+        <!-- Search Icon and Input -->
+        <div id="search-container">
+            <span id="search-icon" onclick="toggleSearchInput()">&#128269;</span>
+            <input type="text" id="search-input" placeholder="Search...">
+        </div>
+
+        <div id="menu-bar">
+            <a href="#"><i class="fas fa-bars"></i></a>
+            <!-- Add more menu icons as needed -->
+        </div>
+        
+    </header>
+
+    <div id="content-container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <!-- Your footer content goes here -->
+        <p>&copy; 2024 My App</p>
+        <p>Additional Information: Your additional information here</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Load home page content by default if not already present
+            if ($("#content-container").is(':empty')) {
+                loadContent("{% url 'home' %}", true);
+            }
+
+            // Handle clicks on the Home link
+            $("#home-link").click(function(event) {
+                event.preventDefault();
+                loadContent("{% url 'home' %}", true);
+                history.pushState(null, null, "{% url 'home' %}");
+            });
+
+            // Handle clicks on the About link
+            $("#about-link").click(function(event) {
+                event.preventDefault();
+                loadContent("{% url 'about' %}", true);
+                history.pushState(null, null, "{% url 'about' %}");
+            });
+        });
+
+        // Function to load content into the container
+        function loadContent(url, updateUrl) {
+            $("#content-container").load(url, function() {
+                if (updateUrl) {
+                    history.pushState(null, null, url);
+                }
+            });
+        }
+
+        // Function to toggle the visibility of the search input
+        function toggleSearchInput() {
+            $("#search-input").toggle();
+        }
+    </script>
+</body>
+</html>
